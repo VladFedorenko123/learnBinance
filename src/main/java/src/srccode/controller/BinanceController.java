@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import src.srccode.model.BinanceCryptoCurrencyDto;
+import src.srccode.model.CryptoCurrencyDto;
 import src.srccode.service.BinanceService;
+
+import java.util.List;
 
 
 @RestController
@@ -16,7 +18,7 @@ public class BinanceController {
     private final BinanceService binanceService;
 
     @PostMapping
-    public BinanceCryptoCurrencyDto getCryptoCurrencyRate(@RequestBody BinanceCryptoCurrencyDto binanceCryptoCurrencyDto) {
-        return binanceService.getCryptoCurrencyRate(binanceCryptoCurrencyDto);
+    public List<CryptoCurrencyDto> getCryptoCurrencyRate(@RequestBody CryptoCurrencyDto cryptoCurrencyDto) {
+        return binanceService.getCryptoCurrencyRate(cryptoCurrencyDto);
     }
 }

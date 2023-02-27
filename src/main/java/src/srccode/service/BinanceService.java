@@ -1,7 +1,9 @@
 package src.srccode.service;
 
-import src.srccode.model.BinanceCryptoCurrencyDto;
+import src.srccode.model.CryptoCurrencyDto;
+
+import java.util.List;
 
 public interface BinanceService {
-    BinanceCryptoCurrencyDto getCryptoCurrencyRate(BinanceCryptoCurrencyDto binanceCryptoCurrencyDto);
+    List<CryptoCurrencyDto> getCryptoCurrencyRate(CryptoCurrencyDto cryptoCurrencyDto);
 }

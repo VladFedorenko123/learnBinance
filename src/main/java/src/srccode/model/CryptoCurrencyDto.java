@@ -11,8 +11,8 @@ import lombok.AllArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BinanceCryptoCurrencyDto {
+public class CryptoCurrencyDto {
     private String price;
-    private String currency;
+    private String exchangeName;
     private String cryptoCurrency;
 }

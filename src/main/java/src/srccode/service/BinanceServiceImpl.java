@@ -6,43 +6,43 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import src.srccode.enums.CryptoCurrencyCode;
 import src.srccode.integration.service.CryptoCurrencyCommunicationService;
-import src.srccode.model.BinanceCryptoCurrencyDto;
+import src.srccode.model.CryptoCurrencyDto;
+import src.srccode.util.BinanceUtil;
+
+import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BinanceServiceImpl implements BinanceService {
+    private final String PRICE_CODE = "USDT";
     private final BinanceApiRestClient binanceApiRestClient;
     private final CryptoCurrencyCommunicationService cryptoCurrencyCommunicationService;
 
     @Override
-    public BinanceCryptoCurrencyDto getCryptoCurrencyRate(BinanceCryptoCurrencyDto binanceCryptoCurrencyDto) {
-        //This try-catch need if ticketCode not be correct microservice not stop!
+    public List<CryptoCurrencyDto> getCryptoCurrencyRate(CryptoCurrencyDto cryptoCurrencyDto) {
+        List<String> cryptoCurrencyList = BinanceUtil.convertStringToList(cryptoCurrencyDto.getCryptoCurrency());
 
-        try {
-            String currency = binanceCryptoCurrencyDto.getCurrency();
-            String cryptoCurrency = binanceCryptoCurrencyDto.getCryptoCurrency();
-
+        List<CryptoCurrencyDto> cryptoCurrencyDtoList = cryptoCurrencyList.stream().map(cryptoCurrency -> {
             String cryptoCurrencyCode = CryptoCurrencyCode.valueOf(cryptoCurrency.toUpperCase())
-                    .getCryptoCurrencyCode() + currency;
+                    .getCryptoCurrencyCode();
+            String cryptoCurrencyTicket = String.format("%s%s", cryptoCurrencyCode, PRICE_CODE);
 
-            String price = binanceApiRestClient.getPrice(cryptoCurrencyCode).getPrice();
+            String price = binanceApiRestClient.getPrice(cryptoCurrencyTicket).getPrice();
 
-            BinanceCryptoCurrencyDto builtCryptoCurrencyDto = buildCryptoCurrency(price, currency, cryptoCurrency);
+            return buildCryptoCurrency(price, cryptoCurrencyDto.getExchangeName(), cryptoCurrency);
+        }).toList();
 
-            cryptoCurrencyCommunicationService.sendCryptoCurrencyRate(builtCryptoCurrencyDto);
+        cryptoCurrencyCommunicationService.sendCryptoCurrencyRate(cryptoCurrencyDtoList);
 
-            return builtCryptoCurrencyDto;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return null;
+        return cryptoCurrencyDtoList;
     }
 
-    private BinanceCryptoCurrencyDto buildCryptoCurrency(String price, String currency, String cryptoCurrency) {
-        return BinanceCryptoCurrencyDto.builder()
+    private CryptoCurrencyDto buildCryptoCurrency(String price, String exchangeName, String key) {
+        String cryptoCurrency = String.format("%s_%s", exchangeName, key);
+        return CryptoCurrencyDto.builder()
                 .price(price)
-                .currency(currency)
+                .exchangeName(exchangeName)
                 .cryptoCurrency(cryptoCurrency)
                 .build();
     }

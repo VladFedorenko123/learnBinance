@@ -1,7 +1,9 @@
 package src.srccode.integration.service;
 
-import src.srccode.model.BinanceCryptoCurrencyDto;
+import src.srccode.model.CryptoCurrencyDto;
+
+import java.util.List;
 
 public interface CryptoCurrencyCommunicationService {
-    void sendCryptoCurrencyRate(BinanceCryptoCurrencyDto binanceCryptoCurrencyDto);
+    void sendCryptoCurrencyRate(List<CryptoCurrencyDto> binanceCryptoCurrencyDto);
 }

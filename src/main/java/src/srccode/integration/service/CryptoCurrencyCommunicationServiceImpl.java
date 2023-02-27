@@ -6,9 +6,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import src.srccode.integration.uri.CryptoCurrencyUriBuilder;
-import src.srccode.model.BinanceCryptoCurrencyDto;
+import src.srccode.model.CryptoCurrencyDto;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.springframework.http.HttpMethod.POST;
 
@@ -20,9 +21,9 @@ public class CryptoCurrencyCommunicationServiceImpl implements CryptoCurrencyCom
     private final RestTemplate restTemplate;
 
     @Override
-    public void sendCryptoCurrencyRate(BinanceCryptoCurrencyDto binanceCryptoCurrencyDto) {
+    public void sendCryptoCurrencyRate(List<CryptoCurrencyDto> binanceCryptoCurrencyDto) {
         URI uri = cryptoCurrencyUriBuilder.saveOrUpdateCryptoCurrency();
-        HttpEntity<BinanceCryptoCurrencyDto> httpEntity = new HttpEntity<>(binanceCryptoCurrencyDto);
+        HttpEntity<List<CryptoCurrencyDto>> httpEntity = new HttpEntity<>(binanceCryptoCurrencyDto);
         try {
             log.info("Sending data");
             restTemplate.exchange(uri, POST, httpEntity, String.class);
