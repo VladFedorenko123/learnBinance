@@ -16,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BinanceServiceImpl implements BinanceService {
     private final String PRICE_CODE = "USDT";
+    private final String EXCHANGE_NAME = "Binance";
     private final BinanceApiRestClient binanceApiRestClient;
     private final CryptoCurrencyCommunicationService cryptoCurrencyCommunicationService;
 
@@ -30,7 +31,7 @@ public class BinanceServiceImpl implements BinanceService {
 
             String price = binanceApiRestClient.getPrice(cryptoCurrencyTicket).getPrice();
 
-            return buildCryptoCurrency(price, cryptoCurrencyDto.getExchangeName(), cryptoCurrency);
+            return buildCryptoCurrency(price, EXCHANGE_NAME, cryptoCurrency);
         }).toList();
 
         cryptoCurrencyCommunicationService.sendCryptoCurrencyRate(cryptoCurrencyDtoList);
@@ -38,8 +39,7 @@ public class BinanceServiceImpl implements BinanceService {
         return cryptoCurrencyDtoList;
     }
 
-    private CryptoCurrencyDto buildCryptoCurrency(String price, String exchangeName, String key) {
-        String cryptoCurrency = String.format("%s_%s", exchangeName, key);
+    private CryptoCurrencyDto buildCryptoCurrency(String price, String exchangeName, String cryptoCurrency) {
         return CryptoCurrencyDto.builder()
                 .price(price)
                 .exchangeName(exchangeName)
