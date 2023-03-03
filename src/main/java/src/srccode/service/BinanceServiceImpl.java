@@ -4,10 +4,8 @@ import com.binance.api.client.BinanceApiRestClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import src.srccode.enums.CryptoCurrencyCode;
 import src.srccode.integration.service.CryptoCurrencyCommunicationService;
 import src.srccode.model.CryptoCurrencyDto;
-import src.srccode.util.BinanceUtil;
 
 import java.util.List;
 
@@ -21,22 +19,17 @@ public class BinanceServiceImpl implements BinanceService {
     private final CryptoCurrencyCommunicationService cryptoCurrencyCommunicationService;
 
     @Override
-    public List<CryptoCurrencyDto> getCryptoCurrencyRate(CryptoCurrencyDto cryptoCurrencyDto) {
-        List<String> cryptoCurrencyList = BinanceUtil.convertStringToList(cryptoCurrencyDto.getCryptoCurrency());
-
-        List<CryptoCurrencyDto> cryptoCurrencyDtoList = cryptoCurrencyList.stream().map(cryptoCurrency -> {
-            String cryptoCurrencyCode = CryptoCurrencyCode.valueOf(cryptoCurrency.toUpperCase())
-                    .getCryptoCurrencyCode();
-            String cryptoCurrencyTicket = String.format("%s%s", cryptoCurrencyCode, PRICE_CODE);
-
+    public List<CryptoCurrencyDto> getCryptoCurrencyRate(List<CryptoCurrencyDto> cryptoCurrencyDtoList) {
+        List<CryptoCurrencyDto> cryptoCurrencyDtos = cryptoCurrencyDtoList.stream().map(cryptoCurrencyDto -> {
+            String cryptoCurrencyTicket = String.format("%s%s", cryptoCurrencyDto.getExchangeName(), PRICE_CODE);
             String price = binanceApiRestClient.getPrice(cryptoCurrencyTicket).getPrice();
 
-            return buildCryptoCurrency(price, EXCHANGE_NAME, cryptoCurrency);
+            return buildCryptoCurrency(price, EXCHANGE_NAME, cryptoCurrencyDto.getCryptoCurrency());
         }).toList();
 
-        cryptoCurrencyCommunicationService.sendCryptoCurrencyRate(cryptoCurrencyDtoList);
+        cryptoCurrencyCommunicationService.sendCryptoCurrencyRate(cryptoCurrencyDtos);
 
-        return cryptoCurrencyDtoList;
+        return cryptoCurrencyDtos;
     }
 
     private CryptoCurrencyDto buildCryptoCurrency(String price, String exchangeName, String cryptoCurrency) {

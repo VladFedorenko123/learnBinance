@@ -5,5 +5,5 @@ import src.srccode.model.CryptoCurrencyDto;
 import java.util.List;
 
 public interface BinanceService {
-    List<CryptoCurrencyDto> getCryptoCurrencyRate(CryptoCurrencyDto cryptoCurrencyDto);
+    List<CryptoCurrencyDto> getCryptoCurrencyRate(List<CryptoCurrencyDto> cryptoCurrencyDtoList);
 }
